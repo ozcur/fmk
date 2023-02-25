@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 )
@@ -69,7 +70,7 @@ func findImages(path string) ([]string, error) {
 		}
 
 		ext := filepath.Ext(f.Name())
-		_, isImage := imgExtensions[ext]
+		_, isImage := imgExtensions[strings.ToLower(ext)]
 		if isImage {
 			ret = append(ret, filepath.Join(path, f.Name()))
 		}
