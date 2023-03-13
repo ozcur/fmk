@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	fyne.io/fyne/v2 v2.3.1
+	github.com/pixiv/go-libjpeg v0.0.0-20190822045933-3da21a74767d
 	github.com/rivo/duplo v0.0.0-20220703183130-751e882e6b83
 	github.com/rs/zerolog v1.29.0
 	github.com/theckman/yacspin v0.13.12

@@ -7,6 +7,7 @@ import (
 	_ "image/png"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -15,6 +16,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"github.com/pixiv/go-libjpeg/jpeg"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )
@@ -113,10 +115,23 @@ func (ib *sortBrowser) refreshImg() {
 	openDuration := time.Since(openStart)
 
 	decodeStart := time.Now()
-	img, _, err := image.Decode(f)
+
+	// Large jpeg files decode very slow using stdlib.  Use
+	// a different library to decode them.
+	img := image.Image(nil)
+	ext := strings.ToLower(filepath.Ext(ib.imagePaths[ib.imagePathsIdx]))
+	if ext == ".jpg" || ext == ".jpeg" {
+		img, err = jpeg.Decode(f, &jpeg.DecoderOptions{})
+		log.Debug().Msg("decoded with 3rd party lib")
+	} else {
+		img, _, err = image.Decode(f)
+		log.Debug().Msg("decoded with stdlib")
+	}
+
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to decode image file.")
 	}
+
 	decodeDuration := time.Since(decodeStart)
 
 	setImgStart := time.Now()
