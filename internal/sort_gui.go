@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	sGUIWidth  = 600
-	sGUIHeight = 600
+	sGUIWidth  = 1200
+	sGUIHeight = 1200
 
 	infoNameStr       = "**Name**: %s"
 	infoDimensionsStr = "**Dimensions**: %dx%d"
