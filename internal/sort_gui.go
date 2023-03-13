@@ -7,6 +7,7 @@ import (
 	_ "image/png"
 	"os"
 	"path/filepath"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -104,19 +105,35 @@ func (ib *sortBrowser) next() {
 }
 
 func (ib *sortBrowser) refreshImg() {
+	openStart := time.Now()
 	f, err := os.Open(ib.imagePaths[ib.imagePathsIdx])
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to open image file.")
 	}
+	openDuration := time.Since(openStart)
 
+	decodeStart := time.Now()
 	img, _, err := image.Decode(f)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to decode image file.")
 	}
+	decodeDuration := time.Since(decodeStart)
 
+	setImgStart := time.Now()
 	ib.curImg = img
 	ib.fCanvas.Image = img
+	setImgDuration := time.Since(setImgStart)
+
+	refreshStart := time.Now()
 	ib.fCanvas.Refresh()
+	refreshDuration := time.Since(refreshStart)
+
+	log.Debug().
+		Str("openDuration", openDuration.String()).
+		Str("decodeDuration", decodeDuration.String()).
+		Str("setImgDuration", setImgDuration.String()).
+		Str("refreshDuration", refreshDuration.String()).
+		Msg("Refreshed image durations")
 }
 
 func (ib *sortBrowser) refreshInfo() {
